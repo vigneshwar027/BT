@@ -21,9 +21,9 @@ os.chdir(cwd)
 
 def process_beneficiary(df_ben):
 
-    source_excel_headers_actemp = ['Case No',"Beneficiary Name","Birth Country","Citizenship","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","I-129S Expires","Petition Expiration Date PED","EAD Expiration","Visa Priority Date","Visa Preference","Visa Country of Chargeability","Visa Priority Note","Management Info Employee ID","Management Info Job Title","Management Info Job Location City","Management Info Job Location State","Current Process Type","Management Info Business Partner Name"] 
+    source_excel_headers_actemp = ['Case No',"Beneficiary Name","Birth Country","Citizenship","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","I-129S Expires","Petition Expiration Date PED","EAD Expiration","Visa Priority Date","Visa Preference","Visa Country of Chargeability","Visa Priority Note","Management Info Employee ID","Management Info Job Title","Management Info Job Location City","Management Info Job Location State","Current Process Type","Management Info Manager Name","Management Info Business Partner Name"] 
 
-    result_excel_headers_actemp = ['Unique Record Id (BT)',"Employee Name","Country of Birth","Country of Citizenship","Current Status","Current Status Expiration Date","I-797 Expiration Date","I-94 Status","I-94 Expiration Date","NIV Max Out Date","I-129S Expiration Date","PED","EAD Expiration Date","Visa Priority Date","Visa Preference","Visa Country of Chargeability","Visa Priority Note","Employee Id","Job Title","Work Location City","Work Location State","Current Case Type","HRBP"]
+    result_excel_headers_actemp = ['Unique Record Id (BT)',"Employee Name","Country of Birth","Country of Citizenship","Current Status","Current Status Expiration Date","I-797 Expiration Date","I-94 Status","I-94 Expiration Date","NIV Max Out Date","I-129S Expiration Date","PED","EAD Expiration Date","Visa Priority Date","Visa Preference","Visa Country of Chargeability","Visa Priority Note","Employee Id","Job Title","Work Location City","Work Location State","Current Case Type","Manager Name","HRBP"]
 
 
     df_tab1 = pd.DataFrame()
@@ -63,9 +63,9 @@ def process_casefile(df_case,src_name,df_tab1):
     file_path = "Processed Reports Folder/{}_StatusReport_{}.xlsx".format(src_name, file_gen_date)
     
 
-    source_excel_headers_niv = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","HR Info - Department","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"]
+    source_excel_headers_niv = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","Management Info Manager Name","HR Info - Department","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"]
 
-    result_excel_headers_niv = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","HRBP","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
+    result_excel_headers_niv = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","Manager Name","HRBP","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
 
     date_columns = []
 
@@ -98,9 +98,9 @@ def process_casefile(df_case,src_name,df_tab1):
                       (df_tab2['Case Type'] == 'L Blanket') |
                       (df_tab2['Case Type'] == 'H-4 Derivative') ]
 
-    source_excel_headers_perm = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","HR Info - Department","HR Info - Department Number","HR Info - Job Code","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","LC First Filing Date","LC Last Filing Date","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"] 
+    source_excel_headers_perm = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","Management Info Manager Name","HR Info - Department","HR Info - Department Number","HR Info - Job Code","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","LC First Filing Date","LC Last Filing Date","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"] 
 
-    result_excel_headers_perm = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","HRBP","REQ #","PERM Job Title","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","LC First Filing Date","LC Last Filing Date","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
+    result_excel_headers_perm = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","Manager Name","HRBP","REQ #","PERM Job Title","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","LC First Filing Date","LC Last Filing Date","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
 
 
     df_tab3 = pd.DataFrame()
@@ -127,9 +127,9 @@ def process_casefile(df_case,src_name,df_tab1):
     df_tab3 = df_tab3[(df_tab3['Case Type'] == 'Labor Cert PERM')]
 
 
-    source_excel_headers_pr = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","HR Info - Department","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","I-140 filing deadline","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"] 
+    source_excel_headers_pr = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","Management Info Manager Name","HR Info - Department","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","I-140 filing deadline","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"] 
 
-    result_excel_headers_pr = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","HRBP","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","I-140 filing deadline","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
+    result_excel_headers_pr = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","Manager Name","HRBP","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","I-140 filing deadline","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
 
 
     df_tab4 = pd.DataFrame()
@@ -157,9 +157,9 @@ def process_casefile(df_case,src_name,df_tab1):
                       (df_tab4['Case Type'] == 'AOS Employment')]
 
 
-    source_excel_headers_h1b = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","HR Info - Department","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"] 
+    source_excel_headers_h1b = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","Management Info Manager Name","HR Info - Department","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"] 
 
-    result_excel_headers_h1b = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","HRBP","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
+    result_excel_headers_h1b = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","Manager Name","HRBP","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
 
 
     df_tab5 = pd.DataFrame()
@@ -188,9 +188,9 @@ def process_casefile(df_case,src_name,df_tab1):
     df_tab6 = pd.DataFrame()
 
 
-    source_excel_headers_aprov = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","HR Info - Department","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"] 
+    source_excel_headers_aprov = ['Case No',"Petitioner","Beneficiary Name","Current Status","Current Status Expires","I-797 Expires","Entry Status","I94 Expires","NIV Max Out Date","Petition Expiration Date PED","EAD Expiration","Management Info Manager Name","HR Info - Department","Management Info Employee ID","Management Info Job Title","Process Case No","Case Opened","Process Type","Process Reference","Application Filed","Final Action Status","Final Action Date","Summary Case Disposition"] 
 
-    result_excel_headers_aprov = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","HRBP","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
+    result_excel_headers_aprov = ['Unique Record Id (BT)',"Petitioner","Beneficiary Name","Current Status","Current Status Expiration Date","I-797 Expiration Date","Entry Status","I-94 Expiration Date","NIV Max Out Date","PED ","EAD Expiration Date","Management Info Manager Name","HRBP","Employee Id","Job Title","Case Id","Case Opened Date","Case Type","Case Reference","Case Filed Date ","Final Action Status","Final Action Date","Summary Case Disposition"]
 
     for x,y in zip(source_excel_headers_aprov,result_excel_headers_aprov):     
         df_tab6[y] = df_approved[x]
