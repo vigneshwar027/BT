@@ -4,20 +4,126 @@ import os
 import glob
 from datetime import datetime,date
 from openpyxl import formatting, styles, Workbook as openpyxl_workbook, load_workbook
-from openpyxl.styles import Alignment, Border, Side, Font, Color
+from openpyxl.styles import Alignment, Border, Side, Font, PatternFill, colors
 from openpyxl.styles.differential import DifferentialStyle
 from openpyxl.worksheet.dimensions import ColumnDimension
 from openpyxl.styles.fills import Fill
 from openpyxl.formatting.rule import CellIsRule, Rule
 from openpyxl.styles.borders import Border, Side
 from openpyxl.worksheet.table import Table, TableStyleInfo
+from dateutil.relativedelta import relativedelta
 from openpyxl.utils import get_column_letter
+
+warnings.filterwarnings(action='ignore')
 
 warnings.filterwarnings(action='ignore')
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 print(cwd)
 os.chdir(cwd)
+
+
+def add_designs(file_path,date_months=''):
+    
+    exp_month = ((datetime.today())) + relativedelta(days=+270) 
+    this_month = ((datetime.today()))
+    next_month = ((datetime.today())) + relativedelta(months=+1) 
+
+    end_month_str = pd.to_datetime(exp_month)
+    this_month_str = pd.to_datetime(this_month)
+    next_month_str = pd.to_datetime(next_month).date()
+
+    # print ('\nAdding designs to the processed file..')
+    book = load_workbook(file_path)
+    for page_no,sheet in enumerate(book.sheetnames):
+        page_no += 1
+        # ws = book[book.sheetnames[sheet]] #for reading using sheet number
+        ws = book.get_sheet_by_name(sheet)
+        if ws:
+            rows = ws.max_row 
+            cols= ws.max_column 
+
+            if rows<2:
+                rows = 2
+                ws.cell(row=2, column = 1).value = 'No Records Found'
+
+            if sheet == 0:   
+                ws.freeze_panes = ws['D2']
+            else:
+                ws.freeze_panes = ws['F2']
+
+            for y in range(rows):
+                for z in range(cols):
+
+                    ws.cell(row=y+1, column=z+1).font = Font(name = 'Calibri (Body)', size = 11)
+
+                    ws.cell(row=y+1, column=z+1).alignment=Alignment(wrap_text=True, horizontal='left', vertical='bottom')
+
+                    ws.cell(row=y+1, column=z+1).font= Font(name = 'Calibri (Body)', size= 11)
+
+                    if sheet.lower().__contains__('expiration'):  #
+                        if str(ws.cell(row=1, column=z+1).value) in date_months:
+                            doc_date = ws.cell(row=y+1, column=z+1).value
+
+                            #old working conditions might be used later:
+                            # try:
+                            #     if (doc_date>=this_month) and (doc_date<=exp_month):
+                                    
+                            #         if(doc_date.month == this_month.month) and (doc_date.year == this_month.year):
+                            #             ws.cell(row=y+1, column=z+1).fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type = 'solid') #red    
+                            #         elif(doc_date.month == next_month.month) and (doc_date.year == next_month.year):
+                            #             ws.cell(row=y+1, column=z+1).fill = PatternFill(start_color='FFC000', end_color='FFC000', fill_type = 'solid') #orange
+                            #         else:
+                            #             ws.cell(row=y+1, column=z+1).fill = PatternFill(start_color='FFFF99', end_color='FFFF99', fill_type = 'solid') #yellow
+                            # except:
+                            #     pass
+
+                        # coloring blank cell condition:
+                        #     if str(doc_date) in ['','nan','NaT','NaN','Nan','None']:
+                        #         ws.cell(row=y+1, column=z+1).fill = PatternFill(start_color='FF0000', end_color='FF0000', fill_type = 'solid') #red
+                            
+                            # #new conditions:
+                            try:
+                                if (doc_date<=exp_month):
+                                    
+                                    if(doc_date <= this_month):
+                                        ws.cell(row=y+1, column=z+1).fill = PatternFill(start_color='F06969', end_color='F06969', fill_type = 'solid') #red    
+                                    else:
+                                        ws.cell(row=y+1, column=z+1).fill = PatternFill(start_color='FFFF99', end_color='FFFF99', fill_type = 'solid') #yellow
+                            except:
+                                pass
+
+                    ws.cell(row=y+1, column=z+1).border= Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+
+                    if y == 0:
+                        ws.cell(row=y+1, column=z+1).font = Font(name = 'Calibri',size = 12, color = 'FFFFFF')
+
+                        ws.cell(row=y+1, column=z+1).alignment=Alignment(wrap_text=True, horizontal='center', vertical='center')
+
+        for cl in range(cols):
+            if cl <= cols:
+                ws.column_dimensions[get_column_letter(cl+1)].width = 15
+                if (sheet == 'Acronyms'):
+                    ws.column_dimensions[get_column_letter(cl+1)].width = 50
+                    
+        for rw in range(rows+1):
+            if rw <= rows:
+                ws.row_dimensions[rw].height = 30
+
+        table = Table(displayName=f'Table_{page_no}', ref='A1:' + get_column_letter(cols) + str(rows))
+        # .replace used above coz table display name cant hav spaces
+        #     ws.cell(row=2, column = 1).value = 'No Records Found'
+
+        style = TableStyleInfo(name='TableStyleMedium2', showFirstColumn=False,showLastColumn=False, showRowStripes=True, showColumnStripes=False)
+
+        table.tableStyleInfo = style
+        ws.add_table(table)
+
+        book.save(file_path)
+    book.close()
+ 
+
+
 
 def process_beneficiary(df_ben):
 
@@ -182,6 +288,8 @@ def process_casefile(df_case,src_name,df_tab1):
     df_tab5 = df_tab5[(df_tab5['Case Type'] == 'H-1B CAP')]
 
 # tab6 reading from the new excel file
+    print ('\nProcessing Open Process Data file')
+
     Approved_cases_file = glob.glob("Source Data/*Approved*")
 
     df_approved = pd.read_excel(Approved_cases_file[0]) 
@@ -229,57 +337,59 @@ def process_casefile(df_case,src_name,df_tab1):
     
     writer.save()
     # writer.close()
+    
+    add_designs(file_path)
 
-    book = load_workbook(file_path)
-    writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
-    writer.book = book
+    # book = load_workbook(file_path)
+    # writer = pd.ExcelWriter(file_path, engine = 'openpyxl')
+    # writer.book = book
 
-    for x in range(6):
-        ws = book[book.sheetnames[x]]
-        if ws:
-            rows = ws.max_row 
-            cols= ws.max_column 
+    # for x in range(6):
+    #     ws = book[book.sheetnames[x]]
+    #     if ws:
+    #         rows = ws.max_row 
+    #         cols= ws.max_column 
 
-            if x == 0:   
-                ws.freeze_panes = ws['D2']
-            else:
-                ws.freeze_panes = ws['F2']
+    #         if x == 0:   
+    #             ws.freeze_panes = ws['D2']
+    #         else:
+    #             ws.freeze_panes = ws['F2']
 
-            for y in range(rows):
-                for z in range(cols):
+    #         for y in range(rows):
+    #             for z in range(cols):
 
-                    ws.cell(row=y+1, column=z+1).font = Font(name = 'Calibri (Body)', size = 11)
+    #                 ws.cell(row=y+1, column=z+1).font = Font(name = 'Calibri (Body)', size = 11)
 
-                    ws.cell(row=y+1, column=z+1).alignment=Alignment(wrap_text=True, horizontal="center", vertical="center")
+    #                 ws.cell(row=y+1, column=z+1).alignment=Alignment(wrap_text=True, horizontal="center", vertical="center")
 
-                    ws.cell(row=y+1, column=z+1).font= Font(name = 'Calibri (Body)', size= 11)
+    #                 ws.cell(row=y+1, column=z+1).font= Font(name = 'Calibri (Body)', size= 11)
 
-                    ws.cell(row=y+1, column=z+1).border= Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    #                 ws.cell(row=y+1, column=z+1).border= Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
 
-                    if y == 0:
+    #                 if y == 0:
 
-                        ws.cell(row=y+1, column=z+1).font = Font(name = 'Calibri',size = 12, color = 'FFFFFF')
+    #                     ws.cell(row=y+1, column=z+1).font = Font(name = 'Calibri',size = 12, color = 'FFFFFF')
 
-        for cl in range(cols):
-            if cl <= cols:
-                ws.column_dimensions[get_column_letter(cl+1)].width = 15
+    #     for cl in range(cols):
+    #         if cl <= cols:
+    #             ws.column_dimensions[get_column_letter(cl+1)].width = 15
 
-        for rw in range(rows+1):
-            if rw <= rows:
-                ws.row_dimensions[rw].height = 30
+    #     for rw in range(rows+1):
+    #         if rw <= rows:
+    #             ws.row_dimensions[rw].height = 30
 
-        table = Table(displayName="Table{}".format(x+1), ref="A1:" + get_column_letter(cols) + str(rows))
+    #     table = Table(displayName="Table{}".format(x+1), ref="A1:" + get_column_letter(cols) + str(rows))
 
-        style = TableStyleInfo(name="TableStyleMedium2", showFirstColumn=False,
-                       showLastColumn=False, showRowStripes=True, showColumnStripes=False)
-        table.tableStyleInfo = style
-        ws.add_table(table)
+    #     style = TableStyleInfo(name="TableStyleMedium2", showFirstColumn=False,
+    #                    showLastColumn=False, showRowStripes=True, showColumnStripes=False)
+    #     table.tableStyleInfo = style
+    #     ws.add_table(table)
 
-        # for z in range(cols):
-        #    ws.cell(row=1, column=z+1).font = Font(size = 12,color = 'ffffff')
+    #     # for z in range(cols):
+    #     #    ws.cell(row=1, column=z+1).font = Font(size = 12,color = 'ffffff')
 
-        book.save(file_path)
-    book.close()
+    #     book.save(file_path)
+    # book.close()
     
     
 def start():
